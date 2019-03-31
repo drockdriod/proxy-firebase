@@ -12,3 +12,5 @@
 *.out
 
 /firebase/serviceAccount.json
+
+*.DS_Store

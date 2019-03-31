@@ -1,0 +1,107 @@
+<html>
+    <body>
+        <h1>Testing</h1>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+        var client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "admin");
+
+        // set callback handlers
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+
+        // connect the client
+        client.connect({ onSuccess: onConnect });
+
+
+        // called when the client connects
+        function onConnect() {
+            console.log("onConnect");
+            client.subscribe("test");
+        }
+
+        // called when the client loses its connection
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost:" + responseObject.errorMessage);
+                client.connect({ onSuccess: onConnect });
+            }
+        }
+
+        // $(document).on('click','#publishMessage', function(){
+        //     sendMessage($("#message"))
+        // })
+
+        // $(document).on('keypress','#message', function(e) {
+        //     if(e.which == 13) {
+        //         e.preventDefault()
+        //         sendMessage($("#message"))
+        //     }
+        // })
+
+
+        // function sendMessage(msgElement){
+        //     if(msgElement.val() != ""){
+        //         var today = moment()
+        //         var json = {
+        //             message: msgElement.val(),
+        //             topic: "home",
+        //             title: "New message!",
+        //             email:"admin@nxmlabs.com",
+        //             timeago: today.fromNow()
+        //         }
+
+        //         var message = new Paho.MQTT.Message(JSON.stringify(json));
+        //         message.destinationName = "home"
+
+        //         msgElement.val("")
+
+        //         client.send(message)
+        //     }
+        //     else{
+        //         alert("Your message must be defined before publishing")
+        //     }
+        // }
+
+        function isJsonString(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
+        // called when a message arrives
+        function onMessageArrived(message) {
+            console.log("onMessageArrived:" + message.payloadString);
+            // if(isJsonString(message.payloadString)){
+
+            //     var obj = JSON.parse(message.payloadString)
+
+            //     var html = '<div class="card card-white post card-shadow">'+
+            //         '<div class="card-body"> ' +
+            //             '<div class="row">' +
+            //     '            <div class="col-md-2 col-sm-4 col-xs-12">' +
+            //         '            <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-fluid img-circle avatar rounded-circle img-thumbnail" alt="user profile image">' +
+            //     '            </div>' +
+            //     '            <div class="col-md-10 col-sm-8 col-xs-12 mt-2">' +
+            //         '            <h5 class="card-title">' +
+            //             '            <a href="#"><strong>' + obj.email +'</strong></a>' +
+            //                         ' published a <a href="#">message</a> to the topic <a href="#">' + obj.topic +'</a>.'+
+            //         '            </h5>' +
+            //         // '            <h6 class="card-subtitle text-muted time">' + obj.timeago +'</h6>' +
+            //     '            </div>' +
+            //     '            </div>' +
+            //     '            <p class="mt-2">' + obj.message + '</p>' +
+                        
+            //         '</div>'+
+            //     '</div>'
+
+            //     $(html).hide().prependTo("#card-holder").fadeIn(1000)
+            }
+        
+        </script>
+    </body>
+</html>
