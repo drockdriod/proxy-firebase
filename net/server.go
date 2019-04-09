@@ -1,14 +1,16 @@
 package net
 
 import (
-	firebaseUtils "github.com/drockdriod/proxy-firebase/net/utils"
-	"github.com/drockdriod/proxy-firebase/mqttbroker"
+	// firebaseUtils "github.com/drockdriod/proxy-firebase/net/utils"
+	// "github.com/drockdriod/proxy-firebase/mqttbroker"
 )
 
 func Start(){
 
-	mqttbroker.ConnectBroker()
+	// mqttbroker.ConnectBroker()
 
-	firebaseUtils.Connect()
-	firebaseUtils.GetRealtimeItemsByCollection("messages")
+	// firebaseUtils.Connect()
+	// firebaseUtils.GetRealtimeItemsByAllCollections()
+
+	// firebaseUtils.GetRealtimeItemsByCollection("messages")
 }	

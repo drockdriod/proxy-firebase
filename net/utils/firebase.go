@@ -3,10 +3,12 @@ package utils
 import (
 	"encoding/json"
 
+	"sync"
+
 	"fmt"
   	"log"
 
-	"github.com/drockdriod/proxy-firebase/mqttbroker"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 
   	"golang.org/x/net/context"
 
@@ -18,13 +20,11 @@ import (
 )
 
 var client *firestore.Client
-var ctx context.Context
+var mqttClient mqtt.Client
 
 
-func Connect() *firestore.Client {
-	ctx = context.Background()
-
-	opt := option.WithCredentialsFile("./firebase/serviceAccount.json")
+func Connect(credentialFileLocation string, ctx context.Context) *firestore.Client {
+	opt := option.WithCredentialsFile(credentialFileLocation)
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 	  	fmt.Errorf("error initializing app: %v", err)
@@ -40,17 +40,15 @@ func Connect() *firestore.Client {
 	return client
 }
 
-func GetRealtimeItemsByCollection(collection string) {
-	query := client.Collection(collection)
+func GetRealtimeItemsByCollection(query *firestore.CollectionRef, waitGroup sync.WaitGroup, mClient mqtt.Client, ctx context.Context) {
 	iter := query.Snapshots(ctx)
+
 	defer iter.Stop()
+	defer waitGroup.Done()
 
 
 	for {
         qsnap, err := iter.Next()
-        // if err == auth.iterator.Done {
-        //     break
-        // }
         
         if err != nil {
             log.Println("err")
@@ -72,7 +70,7 @@ func GetRealtimeItemsByCollection(collection string) {
 			fmt.Println(err.Error())
 		}
 
-		mqttbroker.Publish("test", string(data))
+		mClient.Publish(query.ID, 0, false, string(data))
 
 
 

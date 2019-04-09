@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	// "net/url"
-	"os"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -44,19 +43,20 @@ func Publish(topic string, payload string) {
 	client.Publish(topic, 0, false, payload)
 }
 
-func ConnectBroker() {
-	clientName := os.Getenv("MQTT_CLIENT")
-	port := os.Getenv("MQTT_PORT")
+func ConnectBroker(mqttUri string, port int) mqtt.Client {
 	
-	uri := fmt.Sprintf("%s:%s",clientName,port)
+	
+	uri := fmt.Sprintf("%s:%s",mqttUri,port)
 
 
-	topic := "test"
+	topic := "messages"
 
 
 	c := connect("pub", uri)
 	go listen(uri, topic, c)
 	client.Publish(topic, 0, false, "hello there")
+
+	return c
 	// timer := time.NewTicker(1 * time.Second)
 	// for t := range timer.C {
 	// }
