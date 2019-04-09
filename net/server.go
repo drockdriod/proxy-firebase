@@ -10,5 +10,5 @@ func Start(){
 	mqttbroker.ConnectBroker()
 
 	firebaseUtils.Connect()
-	firebaseUtils.GetRealtimeItemsByCollection("messages")
+	firebaseUtils.GetRealtimeItemsByAllCollections()
 }	

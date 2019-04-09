@@ -12,6 +12,7 @@ import (
 
   	firebase "firebase.google.com/go"
 	"cloud.google.com/go/firestore"
+	"sync"
   // "firebase.google.com/go/auth"
 
   	"google.golang.org/api/option"
@@ -40,17 +41,49 @@ func Connect() *firestore.Client {
 	return client
 }
 
-func GetRealtimeItemsByCollection(collection string) {
-	query := client.Collection(collection)
+func GetRealtimeItemsByAllCollections() {
+	iter := client.Collections(ctx)
+
+	var waitGroup sync.WaitGroup
+    var collections []string
+
+
+	for {
+		ref, err := iter.Next()
+
+		if err != nil {
+            log.Println("GetRealtimeItemsByAllCollections error")
+            log.Println(err.Error())
+            break
+        } else {
+			log.Println(ref.ID)
+			collections = append(collections, ref.ID)
+        	
+        }
+
+
+	}
+
+	waitGroup.Add(len(collections))
+
+    defer waitGroup.Wait()
+
+    for _, collection := range collections {
+		query := client.Collection(collection)
+
+		go GetRealtimeItemsByCollection(query, waitGroup)
+    }
+}
+
+func GetRealtimeItemsByCollection(query *firestore.CollectionRef, waitGroup sync.WaitGroup) {
 	iter := query.Snapshots(ctx)
+
 	defer iter.Stop()
+	defer waitGroup.Done()
 
 
 	for {
         qsnap, err := iter.Next()
-        // if err == auth.iterator.Done {
-        //     break
-        // }
         
         if err != nil {
             log.Println("err")
@@ -66,13 +99,16 @@ func GetRealtimeItemsByCollection(collection string) {
         		items = append(items, element.Doc.Data())
         	}
 		}
+		log.Println(query.ID)
+		log.Println(items)
 
 		data, err := json.Marshal(items)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 
-		mqttbroker.Publish("test", string(data))
+
+		mqttbroker.Publish(query.ID, string(data))
 
 
 

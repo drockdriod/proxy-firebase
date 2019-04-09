@@ -14,3 +14,5 @@
 /firebase/serviceAccount.json
 
 *.DS_Store
+
+.env

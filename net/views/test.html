@@ -5,7 +5,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
         <script type="text/javascript">
-        var client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "admin");
+        var client = new Paho.MQTT.Client("mqtt.dioty.co", Number(8880), "admin");
 
         // set callback handlers
         client.onConnectionLost = onConnectionLost;
